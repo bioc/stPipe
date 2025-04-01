@@ -52,7 +52,33 @@ Filtering can be fine-tuned using both p-value and FDR thresholds, offering grea
 Sptos are retained if they meet the significance criteria for either the p-value or FDR.
 }
 \examples{
-\dontrun{
-qc.results <- Run_QC(config = "path/to/config_stPipe.yml", matched.data = matching, gene.matrix = gene_count)
-}
+output_dir <- tempdir()
+config_list <- list(
+output_directory = output_dir,
+qc_filter = "slope_max",
+qc_per = "0.4_0.8" 
+)
+config_path <- tempfile(fileext = ".yml")
+yaml::write_yaml(config_list, config_path)
+set.seed(123)
+gene_ids <- paste0("gene", 1:100)
+spatial_names <- paste0("SPATIAL_", 1:100)
+count_matrix <- matrix(rpois(100*100, lambda = 20), nrow = 100, ncol = 100)
+colnames(count_matrix) <- spatial_names
+gene_matrix <- data.frame(row.names = gene_ids, count_matrix, stringsAsFactors = FALSE)
+matched_data <- data.frame(
+ X_coordinate = runif(100, min = 0, max = 1000),
+ Y_coordinate = runif(100, min = 0, max = 1000),
+ barcode_sequence = paste0("BC", 1:100),
+ spatial_name = spatial_names,
+ stringsAsFactors = FALSE
+)
+umi_counts <- colSums(gene_matrix[, -1])
+matched_data$UMI_count <- umi_counts[match(matched_data$spatial_name, names(umi_counts))]
+qc_results <- Run_QC(
+ config = config_path,
+ matched.data = matched_data,
+ gene.matrix = gene_matrix,
+ show.config = FALSE
+)
 }

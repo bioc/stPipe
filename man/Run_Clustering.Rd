@@ -4,7 +4,7 @@
 \alias{Run_Clustering}
 \title{Perform Basic Clustering Algorithms}
 \usage{
-Run_Clustering(gene.count, matched.data, path, num_clusters = 5)
+Run_Clustering(gene.count, matched.data, num_clusters = 5)
 }
 \arguments{
 \item{gene.count}{A data frame containing gene count data with gene IDs as row names.}
@@ -33,7 +33,14 @@ It excels at handling large datasets, generating low-dimensional projections in 
 Unlike T-SNE, UMAP seeks to retain both local and global data structures, making it more suitable for capturing broad clustering patterns across the datasets.
 }
 \examples{
-\dontrun{
-clustering.result <- Run_Clustering(gene.count = gene_count, matched.data = matching, num_clusters = 5)
-}
+set.seed(123)
+gene.count <- matrix(sample(0:100, 200 * 100, replace = TRUE), nrow = 200)
+rownames(gene.count) <- paste0("Gene", 1:200)
+colnames(gene.count) <- paste0("Spot", 1:100)
+matched.data <- data.frame(
+  spatial_name = paste0("Spot", 1:100),
+  x_coord = runif(100, 0, 10),
+  y_coord = runif(100, 0, 10)
+)
+result <- Run_Clustering(gene.count = gene.count, matched.data = matched.data, num_clusters = 3)
 }

@@ -18,7 +18,7 @@ The stPipe functions Run_ST, Run_loc_match, Run_QC, Run_Vis, Run_Clustering, Run
 Useful links:
 \itemize{
   \item \url{https://github.com/mritchielab/stPipe}
-  \item Report bugs at \url{https://github.com/mritchielab/stPipe}
+  \item Report bugs at \url{https://github.com/mritchielab/stPipe/issues/new}
 }
 
 }
