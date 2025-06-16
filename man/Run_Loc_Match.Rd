@@ -47,5 +47,9 @@ config_list <- list(
 )
 config_file <- tempfile(fileext = ".yml")
 yaml::write_yaml(config_list, config_file)
-result <- Run_Loc_Match(config = config_file, pixel = FALSE, show.config = FALSE)
+result <- Run_Loc_Match(
+  config = config_file, 
+  pixel = FALSE, 
+  show.config = FALSE
+)
 }

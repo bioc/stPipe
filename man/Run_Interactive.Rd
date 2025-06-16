@@ -36,22 +36,23 @@ This function generates interactive plots to visualize spatial transcriptomics d
 matched_data <- data.frame(
 X_coordinate = runif(10, 0, 100),
 Y_coordinate = runif(10, 0, 100),
-UMI_count = sample(1:100, 10),
-spatial_name = paste0("Spot", 1:10),
+UMI_count = sample(seq_len(100), 10),
+spatial_name = paste0("Spot", seq_len(10)),
 stringsAsFactors = FALSE
 )
 clustering_result <- data.frame(
 TSNE1 = runif(10, -50, 50),
 TSNE2 = runif(10, -50, 50),
-spot = paste0("Spot", 1:10),
-cluster = sample(1:3, 10, replace = TRUE),
+spot = paste0("Spot", seq_len(10)),
+cluster = sample(seq_len(3), 10, replace = TRUE),
 stringsAsFactors = FALSE
 )
 if (interactive()) {
-Run_Interactive(matched_data = matched_data, 
-                clustering_result = clustering_result, 
-                               background_img = NULL, 
-                               reduction_method = "tsne", 
-                               point_size = 1)
+Run_Interactive(
+  matched_data = matched_data, 
+  clustering_result = clustering_result, 
+  background_img = NULL, 
+  reduction_method = "tsne", 
+  point_size = 1)
                                }
 }

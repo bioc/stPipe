@@ -61,15 +61,15 @@ qc_per = "0.4_0.8"
 config_path <- tempfile(fileext = ".yml")
 yaml::write_yaml(config_list, config_path)
 set.seed(123)
-gene_ids <- paste0("gene", 1:100)
-spatial_names <- paste0("SPATIAL_", 1:100)
+gene_ids <- paste0("gene", seq_len(100))
+spatial_names <- paste0("SPATIAL_", seq_len(100))
 count_matrix <- matrix(rpois(100*100, lambda = 20), nrow = 100, ncol = 100)
 colnames(count_matrix) <- spatial_names
 gene_matrix <- data.frame(row.names = gene_ids, count_matrix, stringsAsFactors = FALSE)
 matched_data <- data.frame(
  X_coordinate = runif(100, min = 0, max = 1000),
  Y_coordinate = runif(100, min = 0, max = 1000),
- barcode_sequence = paste0("BC", 1:100),
+ barcode_sequence = paste0("BC", seq_len(100)),
  spatial_name = spatial_names,
  stringsAsFactors = FALSE
 )

@@ -35,13 +35,15 @@ writeLines("technology_version: 'Visium 1.0'\noutput_directory: '.'", temp_confi
 matched.data <- data.frame(
 X_coordinate = runif(10, 0, 100),
 Y_coordinate = runif(10, 0, 100),
-UMI_count = sample(1:100, 10),
-spatial_name = paste0("Spot", 1:10),
+UMI_count = sample(seq_len(100), 10),
+spatial_name = paste0("Spot", seq_len(10)),
 stringsAsFactors = FALSE
 )
-vis_results <- Run_Visualization(matched.data = matched.data, 
-config = temp_config, 
-Vis.spatial = TRUE, 
-Vis.read = FALSE, 
-show.config = FALSE)
+vis_results <- Run_Visualization(
+  matched.data = matched.data, 
+  config = temp_config, 
+  Vis.spatial = TRUE, 
+  Vis.read = FALSE, 
+  show.config = FALSE
+)
 }

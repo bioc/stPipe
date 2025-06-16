@@ -25,14 +25,18 @@
 #' @examples
 #' set.seed(123)
 #' gene.count <- matrix(sample(0:100, 200 * 100, replace = TRUE), nrow = 200)
-#' rownames(gene.count) <- paste0("Gene", 1:200)
-#' colnames(gene.count) <- paste0("Spot", 1:100)
+#' rownames(gene.count) <- paste0("Gene", seq_len(200))
+#' colnames(gene.count) <- paste0("Spot", seq_len(100))
 #' matched.data <- data.frame(
-#'   spatial_name = paste0("Spot", 1:100),
+#'   spatial_name = paste0("Spot", seq_len(100)),
 #'   x_coord = runif(100, 0, 10),
 #'   y_coord = runif(100, 0, 10)
 #' )
-#' result <- Run_Clustering(gene.count = gene.count, matched.data = matched.data, num_clusters = 3)
+#' result <- Run_Clustering(
+#'   gene.count = gene.count, 
+#'   matched.data = matched.data, 
+#'   num_clusters = 3
+#' )
 #' @export
 #' @importFrom ggplot2 ggplot scale_fill_brewer aes geom_bar geom_text theme_minimal theme labs ggsave element_text geom_point scale_color_gradient element_blank element_rect xlim ylim scale_color_brewer
 

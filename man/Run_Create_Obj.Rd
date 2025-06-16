@@ -19,6 +19,23 @@ Run_Create_Obj(gene.matrix, matched.data, obj.type, tech, ss.radius = 3000)
 }
 \value{
 Created spatial transcriptomics data object as required by 'obj.type'.
+set.seed(123)
+gene.count <- matrix(sample(0:100, 200*100, TRUE), nrow=200)
+rownames(gene.count) <- paste0('Gene', 1:200)
+colnames(gene.count) <- paste0('Spot', 1:100)
+matched.data <- data.frame(
+  spatial_name = colnames(gene.count),
+  barcode_sequence = paste0('BC', 1:100),
+  X_coordinate = runif(100,0,10),
+  Y_coordinate = runif(100,0,10),
+  UMI_count = sample(50:200,100,TRUE)
+)
+seu <- Run_Create_Obj(
+  gene.matrix = gene.count,
+  matched.data = matched.data,
+  obj.type = 'Seurat',
+  tech = 'Slideseq'
+)
 }
 \description{
 This function creates specified spatial transcriptomics data object for further personalized downstream analysis

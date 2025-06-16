@@ -17,15 +17,17 @@
 #' matched.data <- data.frame(
 #' X_coordinate = runif(10, 0, 100),
 #' Y_coordinate = runif(10, 0, 100),
-#' UMI_count = sample(1:100, 10),
-#' spatial_name = paste0("Spot", 1:10),
+#' UMI_count = sample(seq_len(100), 10),
+#' spatial_name = paste0("Spot", seq_len(10)),
 #' stringsAsFactors = FALSE
 #' )
-#' vis_results <- Run_Visualization(matched.data = matched.data, 
-#' config = temp_config, 
-#' Vis.spatial = TRUE, 
-#' Vis.read = FALSE, 
-#' show.config = FALSE)
+#' vis_results <- Run_Visualization(
+#'   matched.data = matched.data, 
+#'   config = temp_config, 
+#'   Vis.spatial = TRUE, 
+#'   Vis.read = FALSE, 
+#'   show.config = FALSE
+#' )
 #' @export
 #' @importFrom ggplot2 ggplot scale_fill_brewer aes geom_bar geom_text theme_minimal theme labs element_text geom_point scale_color_gradient element_blank element_rect xlim ylim
 
@@ -33,7 +35,7 @@ Run_Visualization <- function(matched.data = NULL, config, Vis.spatial = TRUE, V
 
   config <- yaml::read_yaml(config)
   if (show.config) {
-    print(config)
+    message(config)
   }
   technology_version <- as.character(config$technology_version)
   output_dir <- as.character(config$output_directory)
@@ -94,7 +96,7 @@ Run_Visualization <- function(matched.data = NULL, config, Vis.spatial = TRUE, V
     sce <- scPipe::calculate_QC_metrics(sce)
 
     # Demultiplexing plot
-    demultiplex_info <- scPipe::demultiplex_info(sce)[1:6, ]
+    demultiplex_info <- scPipe::demultiplex_info(sce)[seq_len(6), ]
     demultiplex_info$count <- as.numeric(demultiplex_info$count)
     total_count <- sum(demultiplex_info$count)
     demultiplex_info$percentage <- (demultiplex_info$count / total_count) * 100

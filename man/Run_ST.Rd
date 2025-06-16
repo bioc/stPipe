@@ -21,7 +21,7 @@ This function processes sequencing-based spatial transcriptomics data using vari
 For Slideseq technology, the input should be BAM file and for all other technologies the input should be FASTQ file.
 }
 \examples{
-data_path <- system.file("data", package = "stPipe")
+data_path <- system.file("extdata", package = "stPipe")
 output_directory <- file.path(tempdir(), "stPipe_output")
 config_list <- list(
 data_directory = data_path,          
@@ -42,5 +42,8 @@ ll= 0
 )
 config_file <- tempfile(fileext = ".yml")
 yaml::write_yaml(config_list, config_file)
-Run_ST(config = config_file, show.config = FALSE)
+Run_ST(
+  config = config_file, 
+  show.config = FALSE
+)
 }
