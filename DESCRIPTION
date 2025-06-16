@@ -1,7 +1,7 @@
 Package: stPipe
 Type: Package
 Title: Upstream pre-processing for Sequencing-Based Spatial Transcriptomics
-Version: 0.99.91
+Version: 0.99.92
 Authors@R: c(person("Yang", "Xu", role=c("aut", "cre"), email="xu.ya@wehi.edu.au", comment=c(ORCID="0009-0008-3274-6516")), 
         person("Callum", "Sargeant", role=c("aut"), email="sargeant.ca@wehi.edu.au"), 
         person("Shian", "Su", role=c("aut"), email="su.s@wehi.edu.au"), 
@@ -12,7 +12,7 @@ biocViews: ImmunoOncology, Software, Sequencing, RNASeq, GeneExpression, SingleC
         SequenceMatching, Preprocessing, QualityControl, GenomeAnnotation, DataImport, Spatial, Transcriptomics, Clustering
 Description: This package serves as an upstream pipeline for pre-processing sequencing-based spatial transcriptomics data. Functions includes FASTQ trimming, BAM file reformatting, index building, spatial barcode detection, demultiplexing, gene count matrix generation with UMI deduplication, QC, and revelant visualization. Config is an essential input for most of the functions which aims to improve reproducibility.
 Depends:
-    R (>= 4.3.0)
+    R (>= 4.5.0)
 Imports:
     AnnotationDbi,
     curl,
