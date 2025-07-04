@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <unordered_map>
-#include "progressbar.hpp"
+#include "progressbar.h"
 #include <zlib.h>
 #include <htslib/kseq.h>
 #include <htslib/hts.h>
@@ -86,19 +86,19 @@ double ReadStats::getHitAcc() {
 }
 
 void ReadStats::reportStats() {
-    Rcpp::Rcout << "Total number of reads: " << total + "\n";
-    Rcpp::Rcout << "Clean hits: " << clean_hit + "\n";
-    Rcpp::Rcout << "Single Error hits: " << err_hit + "\n";
-    Rcpp::Rcout << "Misses: " << miss + "\n";
-    Rcpp::Rcout << "Total hits: " << (clean_hit+err_hit) + "\n";
+    Rcpp::Rcout << "Total number of reads: " << total << endl;
+    Rcpp::Rcout << "Clean hits: " << clean_hit << endl;
+    Rcpp::Rcout << "Single Error hits: " << err_hit << endl;
+    Rcpp::Rcout << "Misses: " << miss << endl;
+    Rcpp::Rcout << "Total hits: " << (clean_hit+err_hit) << endl;
 }
 
 void ReadStats::reportStatsR() {
-    Rcpp::Rcout << "Total number of reads: " << total + "\n";
-    Rcpp::Rcout << "Clean hits: " << clean_hit + "\n";
-    Rcpp::Rcout << "Single Error hits: " << err_hit + "\n";
-    Rcpp::Rcout << "Misses: " << miss + "\n";
-    Rcpp::Rcout << "Total hits: " << (clean_hit+err_hit) + "\n";
+    Rcpp::Rcout << "Total number of reads: " << total << endl;
+    Rcpp::Rcout << "Clean hits: " << clean_hit << endl;
+    Rcpp::Rcout << "Single Error hits: " << err_hit << endl;
+    Rcpp::Rcout << "Misses: " << miss << endl;
+    Rcpp::Rcout << "Total hits: " << (clean_hit+err_hit) << endl;
 }
 
 /*
@@ -136,11 +136,11 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     H5File *file = new H5File(h5_mapping_path, H5F_ACC_RDONLY);
 
     if (_DEBUGGING) {
-        Rcpp::Rcout << "file pointers:" + "\n";
-        Rcpp::Rcout << &_fp + "\n";
-        Rcpp::Rcout << &_fp_r2 + "\n";
-        Rcpp::Rcout << &fp_write + "\n";
-        Rcpp::Rcout << &file + "\n";
+        Rcpp::Rcout << "file pointers:" << endl;
+        Rcpp::Rcout << &_fp << endl;
+        Rcpp::Rcout << &_fp_r2 << endl;
+        Rcpp::Rcout << &fp_write << endl;
+        Rcpp::Rcout << &file << endl;
     }
 
     DataSet dataset = file->openDataSet("bpMatrix_1");
@@ -152,14 +152,14 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     if (_DEBUGGING) {
         Rcpp::Rcout << "rank " << rank << ", dimensions " <<
                 (unsigned long)(dims_out[0]) << " x " <<
-                (unsigned long)(dims_out[1]) + "\n";
+                (unsigned long)(dims_out[1]) << endl;
     }
 
     unsigned long dim_x = (unsigned long)(dims_out[0]);
     unsigned long dim_y = (unsigned long)(dims_out[1]);
     unsigned long dim_z = (unsigned long)(dims_out[2]);
     DataSpace memspace(3, dims_out);
-    Rcpp::Rcout << "x:" << dim_x << " y:" << dim_y << " z:" << dim_z + "\n";
+    Rcpp::Rcout << "x:" << dim_x << " y:" << dim_y << " z:" << dim_z << endl;
 
     std::vector<unsigned long> buf(dim_x*dim_y*dim_z);
     unsigned long *buf_ptr = buf.data();
@@ -170,7 +170,7 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     int c = 0;
     int collisions = 0;
     progressbar bar;
-    Rcpp::Rcout << "building map..." + "\n";
+    Rcpp::Rcout << "building map..." << endl;
     if (_PROGRESS) {
         progressbar bar((int) dim_x*dim_y*dim_z/10000);
     }
@@ -194,19 +194,19 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
         }
         c++;
     }
-    Rcpp::Rcout << "done!" + "\n";
+    Rcpp::Rcout << "done!" << endl;
 
     if (_DEBUGGING) {
-        Rcpp::Rcout + "\n";
-        Rcpp::Rcout << "max size: " << barcode_map.max_size() + "\n";
-        Rcpp::Rcout << buf[0] << " == " << ((barcode_map.find(buf[0])->second & 0xFFFF0000) >> 16) << ", " << (barcode_map.find(buf[0])->second & 0x0000FFFF) + "\n";
-        Rcpp::Rcout << buf[10] << " == " << ((barcode_map.find(buf[10])->second & 0xFFFF0000) >> 16) << ", " << (barcode_map.find(buf[10])->second & 0x0000FFFF) + "\n";
-        Rcpp::Rcout << buf[100000] << " == " << ((barcode_map.find(buf[100000])->second & 0xFFFF0000) >> 16) << ", " << (barcode_map.find(buf[100000])->second & 0x0000FFFF) + "\n";
-        Rcpp::Rcout << "num collisions: " << collisions + "\n";
-        Rcpp::Rcout << "duplicate barcode number: " << duplicate_barcodes.size() + "\n";
+        Rcpp::Rcout << endl;
+        Rcpp::Rcout << "max size: " << barcode_map.max_size() << endl;
+        Rcpp::Rcout << buf[0] << " == " << ((barcode_map.find(buf[0])->second & 0xFFFF0000) >> 16) << ", " << (barcode_map.find(buf[0])->second & 0x0000FFFF) << endl;
+        Rcpp::Rcout << buf[10] << " == " << ((barcode_map.find(buf[10])->second & 0xFFFF0000) >> 16) << ", " << (barcode_map.find(buf[10])->second & 0x0000FFFF) << endl;
+        Rcpp::Rcout << buf[100000] << " == " << ((barcode_map.find(buf[100000])->second & 0xFFFF0000) >> 16) << ", " << (barcode_map.find(buf[100000])->second & 0x0000FFFF) << endl;
+        Rcpp::Rcout << "num collisions: " << collisions << endl;
+        Rcpp::Rcout << "duplicate barcode number: " << duplicate_barcodes.size() << endl;
         if (!duplicate_barcodes.empty()) {
             for (auto b : duplicate_barcodes) {
-                Rcpp::Rcout << b + "\n";
+                Rcpp::Rcout << b << endl;
             }
         }
     }
@@ -215,7 +215,7 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     int l = 0;
     int l_r2 = 0;
     progressbar bar_2;
-    Rcpp::Rcout << "beginning deconvolution..." + "\n";
+    Rcpp::Rcout << "beginning deconvolution..." << endl;
     if (_PROGRESS) {
         progressbar bar_2((int) n_reads/10000);
         // check for interrupt
@@ -229,15 +229,15 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
             if (i % 10000 == 0) bar_2.update();
         }
         if (_DEBUGGING) {
-            Rcpp::Rcout << _seq->seq.s + "\n";
+            Rcpp::Rcout << _seq->seq.s << endl;
         }
 
         std::string seq_str = _seq->seq.s;
         std::string trimmed = seq_str.substr(coord_bc_start, coord_bc_len);
         std::string umi = seq_str.substr(umi_start, umi_len);
         if (_DEBUGGING) {
-            Rcpp::Rcout << umi + "\n";
-            Rcpp::Rcout << trimmed + "\n";
+            Rcpp::Rcout << umi << endl;
+            Rcpp::Rcout << trimmed << endl;
         }
         int bit_mask_index = 0;
         unsigned long trimmed_int = seq_to_int(trimmed);
@@ -268,7 +268,7 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     }
     stats.reportStats();
 
-    Rcpp::Rcout << "done!\n closing files." + "\n";
+    Rcpp::Rcout << "done!\n closing files." << endl;
     kseq_destroy(_seq);
     kseq_destroy(_seq_r2);
     gzclose(_fp);
