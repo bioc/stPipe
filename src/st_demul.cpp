@@ -31,7 +31,6 @@
 #include "Rcpp.h"
 using namespace Rcpp;
 
-using std::cout;
 using std::endl;
 #ifndef H5_NO_NAMESPACE
     using namespace H5;
