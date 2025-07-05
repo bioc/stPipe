@@ -22,14 +22,19 @@
 #' stringsAsFactors = FALSE
 #' )
 #' vis_results <- Run_Visualization(
-#'   matched.data = matched.data, 
-#'   config = temp_config, 
-#'   Vis.spatial = TRUE, 
-#'   Vis.read = FALSE, 
+#'   matched.data = matched.data,
+#'   config = temp_config,
+#'   Vis.spatial = TRUE,
+#'   Vis.read = FALSE,
 #'   show.config = FALSE
 #' )
 #' @export
 #' @importFrom ggplot2 ggplot scale_fill_brewer aes geom_bar geom_text theme_minimal theme labs element_text geom_point scale_color_gradient element_blank element_rect xlim ylim
+#' @importFrom stats reorder
+
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables("UMI_count")
+}
 
 Run_Visualization <- function(matched.data = NULL, config, Vis.spatial = TRUE, Vis.read = TRUE, show.config = TRUE) {
 

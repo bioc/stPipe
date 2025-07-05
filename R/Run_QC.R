@@ -45,7 +45,7 @@
 #' config_list <- list(
 #' output_directory = output_dir,
 #' qc_filter = "slope_max",
-#' qc_per = "0.4_0.8" 
+#' qc_per = "0.4_0.8"
 #' )
 #' config_path <- tempfile(fileext = ".yml")
 #' yaml::write_yaml(config_list, config_path)
@@ -74,6 +74,9 @@
 #' @importFrom dplyr %>%
 #' @importFrom stats quantile na.omit
 
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables("Percentile")
+}
 
 Run_QC <- function(config, matched.data, gene.matrix, show.config = TRUE) {
 
@@ -121,23 +124,23 @@ Run_QC <- function(config, matched.data, gene.matrix, show.config = TRUE) {
     p <- ggplot(quantile_df, aes(x = Percentile, y = Value)) +
       geom_line() +
       geom_point() +
-      geom_segment(data = max_slope_interval, 
+      geom_segment(data = max_slope_interval,
                    aes(x = Percentile[1], y = Value[1], xend = Percentile[2], yend = Value[2]),
                    color = "red", linewidth = 1, arrow = arrow(type = "closed", length = unit(0.2, "inches"))) +
-      geom_text(data = max_slope_interval, 
+      geom_text(data = max_slope_interval,
                 aes(x = Percentile[2], y = Value[2], label = paste("EmptyDrop Retain Threshold", round(Value[1], 2))),
                 vjust = -1, color = "red") +
       geom_hline(yintercept = ed_lower, linetype = "dashed", color = "blue") +
-      geom_text(aes(x = max(Percentile), y = ed_lower, 
+      geom_text(aes(x = max(Percentile), y = ed_lower,
                     label = paste("EmptyDrop Lower Threshold", round(ed_lower, 2))),
                 vjust = -1, hjust = 1.1, color = "blue") +
-      labs(title = "Threshold to filter out low count UMI as potential background noise", 
+      labs(title = "Threshold to filter out low count UMI as potential background noise",
            x = "UMI Count Percentile", y = "Value") +
       theme_minimal()
-    
-    ggsave("Threshold.pdf", plot = p, width = 10, height = 8, units = "in", device = "pdf")  
+
+    ggsave("Threshold.pdf", plot = p, width = 10, height = 8, units = "in", device = "pdf")
   })
-  
+
   # Filtering based on QC method
   if (qc_filter == "slope_max") {
     keep_cells <- sum_counts[sum_counts > threshold]

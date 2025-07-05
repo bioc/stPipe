@@ -27,16 +27,24 @@
 #' )
 #' if (interactive()) {
 #' Run_Interactive(
-#'   matched_data = matched_data, 
-#'   clustering_result = clustering_result, 
-#'   background_img = NULL, 
-#'   reduction_method = "tsne", 
+#'   matched_data = matched_data,
+#'   clustering_result = clustering_result,
+#'   background_img = NULL,
+#'   reduction_method = "tsne",
 #'   point_size = 1)
 #'                                }
 #' @return R-shiny interactive webpage.
 #' @export
 #' @importFrom ggplot2 ggplot scale_fill_brewer aes geom_bar geom_text theme_minimal theme labs ggsave element_text geom_point scale_color_gradient element_blank element_rect xlim ylim scale_color_brewer
 #' @importFrom shiny reactive
+
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(
+    c("TSNE1", "TSNE2", "UMAP1", "UMAP2", "cluster",
+      "X_coordinate", "Y_coordinate", "UMI_count",
+      "spatial_name")
+  )
+}
 
 Run_Interactive <- function(matched_data, clustering_result, background_img = NULL, reduction_method = "tsne", point_size = 1) {
   # Data pre-check

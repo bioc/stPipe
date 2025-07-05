@@ -32,13 +32,15 @@
 #' )
 #' @export
 #' @importFrom ggplot2 theme
+#' @importFrom methods new
+#' @importFrom SummarizedExperiment rowData<-
 
 Run_Create_Obj <- function(gene.matrix, matched.data, obj.type, tech, ss.radius = 3000) {
-  
+
   if (!all(matched.data$spatial_name %in% colnames(gene.matrix))) {
     stop("Spatial locations in matched.data do not match column names of gene.matrix!")
   }
-  
+
   counts_mat <- as.matrix(gene.matrix)
   matched.data <- matched.data[match(colnames(counts_mat), matched.data$spatial_name), ]
   meta_df <- data.frame(
@@ -48,57 +50,57 @@ Run_Create_Obj <- function(gene.matrix, matched.data, obj.type, tech, ss.radius 
     row.names = matched.data$barcode_sequence
   )
   colnames(counts_mat) <- matched.data$barcode_sequence
-  
+
   # Create Seurat object
   if (obj.type == "Seurat") {
-    
+
     # Create a Seurat object
     obj <- SeuratObject::CreateSeuratObject(counts = counts_mat, meta.data = meta_df, assay = 'Spatial')
     coords <- meta_df[, c("X","Y"), drop = FALSE]
-    
+
     obj[['image']] <- new(
       Class = 'SlideSeq',
       assay = "Spatial",
       coordinates = coords)
-    
+
     # add spatial information to created Seurat object based on different technology
     if (tech == "Slideseq" | tech == "Curio-seeker"){
-      
+
       # remove stray beads which fall outside the main Slideseq puck area
       obj <- Seurat::FilterSlideSeq(object = obj, radius = ss.radius, do.plot = TRUE)
-      
+
     }
   } else if (obj.type == "SpatialExperiment") {
-    
+
     obj <- SpatialExperiment::SpatialExperiment(
       assays = list(counts = counts_mat),
       colData = meta_df,
       spatialCoords = as.matrix(meta_df[, c('X','Y')])
     )
     rowData(obj)$gene_name <- rownames(gene.matrix)
-    
-    
+
+
   } else if (obj.type == "AnnData") {
-    
+
     # Create an AnnData object
     anndata <- reticulate::import("anndata")
     obj <- anndata$AnnData(X = gene.matrix)
     obj$obs <- matched.data
-    
+
     py_create_anndata <- "
     import anndata
     adata = anndata.AnnData(X = r.gene_matrix)
     adata.obs = r.matched_data
     "
     reticulate::py_run_string(py_create_anndata)
-    
+
     obj <- reticulate::py$adata
-    
+
   } else {
-    
+
     stop("Unknown obj.type! Please choose class from 'Seurat', 'SpatialExperiment', or 'AnnData'.")
   }
-  
+
   return(obj)
-  
+
 }
