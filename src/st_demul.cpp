@@ -1,18 +1,18 @@
 //' @name RunDemultiplex
- //' @title Demultiplex Stereo-seq data
- //' @description This function processes sequencing data for spatial transcriptomics.
- //' @param read_1_fq Path to the first FASTQ file.
- //' @param read_2_fq Path to the second FASTQ file.
- //' @param h5_mapping Path to the HDF5 barcode mapping file.
- //' @param output_fq Path to the output FASTQ file.
- //' @param n_reads Number of reads to process.
- //' @param bc_start Start position of barcode.
- //' @param bc_len Length of barcode.
- //' @param umi_start Start position of UMI.
- //' @param umi_len Length of UMI.
- //' @param bin_size Binning size of n * n.
- //' @return None. Writes the demultiplexed FASTQ file to the specified path.
- //' @export
+//' @title Demultiplex Stereo-seq data
+//' @description This function processes sequencing data for spatial transcriptomics.
+//' @param read_1_fq Path to the first FASTQ file.
+//' @param read_2_fq Path to the second FASTQ file.
+//' @param h5_mapping Path to the HDF5 barcode mapping file.
+//' @param output_fq Path to the output FASTQ file.
+//' @param n_reads Number of reads to process.
+//' @param bc_start Start position of barcode.
+//' @param bc_len Length of barcode.
+//' @param umi_start Start position of UMI.
+//' @param umi_len Length of UMI.
+//' @param bin_size Binning size of n * n.
+//' @return None. Writes the demultiplexed FASTQ file to the specified path.
+//' @export
 
 #include <iostream>
 #include <string>
@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <vector>
 #include <unordered_map>
-#include "progressbar.h"
 #include <zlib.h>
 #include <htslib/kseq.h>
 #include <htslib/hts.h>
@@ -41,13 +40,6 @@ using std::endl;
 
 #ifndef _DEBUGGING
 #define _DEBUGGING false
-#endif
-
-// uncomment next line to enable progress bar (ONLY USE IF SINGLE THREADED):
-//#define _PROGRESS true
-
-#ifndef _PROGRESS
-#define _PROGRESS false
 #endif
 
 unsigned int CoordPairToInt(unsigned int a, unsigned int b) {
@@ -101,30 +93,6 @@ void ReadStats::reportStatsR() {
     Rcpp::Rcout << "Total hits: " << (clean_hit+err_hit) << endl;
 }
 
-/*
-Rcpp exposed function to run entire method
-IO:
-    In:
-    - fastq read 1 path (string)
-    - fastq read 2 path (string)
-    - h5 barcode mapping file path (string)
-    - fastq output path (string)
-    - number of reads in fastq (int)
-    - start position of spatial barcode in each sequence (int)
-    - length of spatial barcode (int)
-    - start position of UMI in each sequence (int)
-    - length of UMI (int)
-    - bin size (int, default = 1)
-
-    Out:
-    - writes fastq file to output path (*.fq.gz)
-        - equivalent to read 2 but with demultiplexed information in header:
-            - CID (region of barcode defined by CID start pos and length)
-            - UMI (region of barcode defined by UMI start pos and length)
-            - x coordinate (from demultiplexing based on mapping file)
-            - y coordinate (from demultiplexing based on mapping file)
-*/
-//' @export
 // [[Rcpp::export]]
 void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, const char* h5_mapping_path, const char* output_fq_path, int n_reads, int coord_bc_start, int coord_bc_len, int umi_start, int umi_len, int bin_size = 1) {
     gzFile _fp = gzopen(read_1_fq_path, "r");
@@ -148,6 +116,7 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     int rank = dataspace.getSimpleExtentNdims();
     hsize_t dims_out[3];
     int ndims = dataspace.getSimpleExtentDims(dims_out, NULL);
+    (void)ndims; 
 
     if (_DEBUGGING) {
         Rcpp::Rcout << "rank " << rank << ", dimensions " <<
@@ -169,21 +138,11 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
 
     int c = 0;
     int collisions = 0;
-    progressbar bar;
     Rcpp::Rcout << "building map..." << endl;
-    if (_PROGRESS) {
-        progressbar bar((int) dim_x*dim_y*dim_z/10000);
-    }
     for (unsigned long b : buf) {
         if (b == 0) {
-            if (_PROGRESS) {
-                if (c % 10000 == 0) bar.update();
-            }
             c++;
             continue;
-        }
-        if (_PROGRESS) {
-            if (c % 10000 == 0) bar.update();
         }
         if (barcode_map.find(b) != barcode_map.end()) {
             barcode_map[b] = CoordPairToInt(0, 0);
@@ -214,20 +173,12 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     ReadStats stats;
     int l = 0;
     int l_r2 = 0;
-    progressbar bar_2;
+    (void)l_r2; 
     Rcpp::Rcout << "beginning deconvolution..." << endl;
-    if (_PROGRESS) {
-        progressbar bar_2((int) n_reads/10000);
-        // check for interrupt
-        Rcpp::checkUserInterrupt();
-    }
 
     for (int i = 0; (i < n_reads && l >= 0); i++) {
         l = kseq_read(_seq);
         l_r2 = kseq_read(_seq_r2);
-        if (_PROGRESS) {
-            if (i % 10000 == 0) bar_2.update();
-        }
         if (_DEBUGGING) {
             Rcpp::Rcout << _seq->seq.s << endl;
         }
@@ -242,7 +193,6 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
         int bit_mask_index = 0;
         unsigned long trimmed_int = seq_to_int(trimmed);
         unsigned long trimmed_masked_int = trimmed_int;
-        // number of bases * 2 to get binary seq len
         int seq_len = trimmed.size() * 2;
 
         while ((barcode_map.find(trimmed_masked_int) == barcode_map.end()) & (bit_mask_index < seq_len)){
@@ -255,8 +205,6 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
             if (bit_mask_index > 0) stats.err_hit = stats.err_hit + 1;
             std::string x = std::to_string(((barcode_map.find(trimmed_masked_int)->second & 0xFFFF0000) >> 16) / bin_size);
             std::string y = std::to_string((barcode_map.find(trimmed_masked_int)->second & 0x0000FFFF) / bin_size);
-            // read_id structure:
-            // @[barcode sequence]_[umi sequence]#[read name]:x[x coordinate]:y[y coordinate]
             std::string read_id = "@" + trimmed + "_" + umi + "#" + (_seq_r2->name.s) + ":x" + x + ":y" + y;
             std::string out_buf = read_id + "\n" + (_seq_r2->seq.s) + "\n+\n" + (_seq_r2->qual.s) + "\n";
 
@@ -276,5 +224,4 @@ void RunDemultiplex(const char* read_1_fq_path, const char* read_2_fq_path, cons
     gzclose(fp_write);
 
     Rcpp::Rcout << "Demultiplexing completed." << std::endl;
-
 }
