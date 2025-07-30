@@ -33,7 +33,10 @@
 #' @importFrom stats reorder
 
 if (getRversion() >= "2.15.1") {
-  utils::globalVariables("UMI_count")
+  utils::globalVariables(
+    c("UMI_count", "status", "count", "percentage"),
+    package = "stPipe"
+  )
 }
 
 Run_Visualization <- function(matched.data = NULL, config, Vis.spatial = TRUE, Vis.read = TRUE, show.config = TRUE) {

@@ -45,6 +45,7 @@
 #'   show.config = FALSE
 #' )
 #' @export
+#' @importFrom utils read.csv
 
 Run_Loc_Match <- function(config, pixel = FALSE, show.config = TRUE) {
 
