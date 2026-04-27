@@ -1,0 +1,22 @@
+bibentry(
+    bibtype  = "Article",
+    title    = "stPipe: a flexible and streamlined R/Bioconductor pipeline for preprocessing sequencing-based spatial transcriptomics data",
+    author   = c(
+        person("Yang", "Xu"),
+        person("Callum J", "Sargeant"),
+        person("Yue", "You"),
+        person("Yupei", "You"),
+        person("Shian", "Su"),
+        person("Changqing", "Wang"),
+        person("Luyi", "Tian"),
+        person("Yunshun", "Chen"),
+        person("Matthew E", "Ritchie")
+    ),
+    journal  = "NAR Genomics and Bioinformatics",
+    year     = "2025",
+    volume   = "7",
+    number   = "4",
+    pages    = "lqaf167",
+    month    = "December",
+    doi      = "10.1093/nargab/lqaf167"
+)
